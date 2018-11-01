@@ -136,8 +136,8 @@ var textGameStarts = new PointText({
 //Sprint 2: animation for game starts text
 function onFrame(event) {
 	textGameStarts.fillColor.hue += 1;
-    textGameStarts.fontSize += 0.5;
-    if(event.count == 120){
+    textGameStarts.fontSize += 0.4;
+    if(event.count == 160){
         textGameStarts.visible = false;
         circle1.visible = true;
         circle2.visible = true;
