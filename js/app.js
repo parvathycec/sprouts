@@ -3,31 +3,53 @@ var player1 = 'Player 1';//default name
 var player2 = 'Player 2';//default name
 var currentPlayer = player1;
 
+
 //list of circles in the canvas
 var circles = []
 
+//
+var pathCrossed = false;
+
+var startingCircleX="";
+var startingCircleY="";
+
+/* this function used for random number within range */
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 //this function checks if the user has touched inside the circle
 function checkInCircle(x, y){
-	for (var i = 0; i < 2; i++) {
+    console.log("inside checkInCircle x-"+x+" y-"+y);
+	for (var i = 0; i < circles.length ; i++) {
 		console.log('circles[i] ', circles[i].bounds.center._x)
 		circle_x = circles[i].bounds.center._x
 		circle_y = circles[i].bounds.center._y
 		rad = 25
 		if ((x - circle_x) * (x - circle_x) + 
 			(y - circle_y) * (y - circle_y) <= rad * rad) 
-        return true; 
+        return {"status":true,"circle_x":circle_x,"circle_y":circle_y}; // modified with status and circle points
 	}
-	return false; 
+	return {"status":false}; 
 }
+
+ 
+
 //creating the initial circles
-var circle1 = new Path.Circle(new Point(200, 150), 15);
+//var circle1 = new Path.Circle(new Point(getRandomInt(200,500), getRandomInt(150,200)), 25);
+var circle1 = new Path.Circle(new Point(200, 150), 25);
 circle1.fillColor = 'red';
 circle1.visible = false;//Sprint 2
+circle1.pathCount = 0;
 circles.push(circle1)
-var circle2 = new Path.Circle(new Point(400, 300), 15);
+//var circle2 = new Path.Circle(new Point(getRandomInt(400,600), getRandomInt(300,400)), 25);
+var circle2 = new Path.Circle(new Point(400, 300), 25);
 circle2.fillColor = 'red';
 circle2.visible = false;//Sprint 2
+circle2.pathCount = 0;
 circles.push(circle2)
+
+
 
 //defining the curve
 var path = new Path(); //created new path object.
@@ -35,10 +57,16 @@ var path = new Path(); //created new path object.
 
 //event handling on mouse down
 function onMouseDown(event) {
-	console.log(checkInCircle(event.point.x, event.point.y))
-	if(!checkInCircle(event.point.x, event.point.y)){
+    pathCrossed = false;
+	
+    var checkIn = {};
+    checkIn = checkInCircle(event.point.x, event.point.y);
+	if(!checkIn.status){
 		return;
 	}
+    startingCircleX = checkIn.circle_x;
+    startingCircleY = checkIn.circle_y;
+    
 	// If we produced a path before, deselect it:
 	if (path) {
 		path.selected = false;
@@ -57,7 +85,30 @@ function onMouseDown(event) {
     }else{
         path.strokeColor = 'darkblue';
     }
-	console.log(path)
+	console.log("Path:-"+path);
+    
+    var alreadyCreated = false;
+    
+    path.onClick = function(event) {
+            if(!alreadyCreated){
+                alreadyCreated = true;
+                var circle = new Path.Circle(new Point(event.point.x, event.point.y), 20);
+                circle.fillColor = 'purple';
+                circle.visible = false;//Sprint 2
+                circle.pathCount = 2;
+                circles.push(circle);
+                circle.visible = true;
+            }
+            
+		};
+    path.onMouseDrag = function(event) {
+        console.log("stop");
+        //alert("stop");
+        pathCrossed = true;
+    }
+    
+    
+    
 }
 
 // While the user drags the mouse, points are added to the path
@@ -77,12 +128,19 @@ function onMouseDrag(event) {
 // When the mouse is released, we simplify the path:
 function onMouseUp(event) {
     if(path !=0){ //condition to check path exists or not
-     //if the curve is connecting two dots, it is a valid move, else no
-	if(!checkInCircle(event.point.x, event.point.y)){
+     //if the curve is connecting two dots, it is a valid move, else 
+        
+    var checkIn = {};
+        
+    checkIn = checkInCircle(event.point.x, event.point.y);
+        
+	if(!checkIn.status || pathCrossed || checkNoOfPaths(checkIn.circle_x,checkIn.circle_y)){
         //console.log("REMOVEEEEEEEEEE");
 		path.remove()
 		return;
 	}
+    
+    updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
 
 	var segmentCount = path.segments.length;
 
@@ -107,6 +165,53 @@ function onMouseUp(event) {
         textItem.content = player1 + "'s turn";
     }
     }
+}
+
+function checkNoOfPaths(x,y){
+    for (var i = 0; i < circles.length ; i++) {
+        
+        if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y) {
+           
+            
+            console.log( "start : "+circles[i].pathCount);
+            if(circles[i].pathCount === 3) 
+            return true;
+        }
+        
+        if(circles[i].bounds.center._x == startingCircleX && circles[i].bounds.center._y == startingCircleY){
+            
+            console.log( "end : "+circles[i].pathCount);
+            if(circles[i].pathCount === 3) 
+            return true;
+        } 
+           
+            
+        
+        
+    }
+    
+    return false;
+}
+
+function updateNoOfPaths(x,y){
+    
+   for (var i = 0; i < circles.length ; i++) {
+       
+        if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y) {
+           
+           circles[i].pathCount = circles[i].pathCount + 1; 
+            console.log( "start : "+circles[i].pathCount);
+        }
+           
+        if(startingCircleX !=x && startingCircleY !=y){
+           if(circles[i].bounds.center._x == startingCircleX && circles[i].bounds.center._y == startingCircleY) 
+           circles[i].pathCount = circles[i].pathCount + 1;
+            console.log( "end : "+circles[i].pathCount);
+           }
+        
+       
+    } 
+    
 }
 
 //var rectForText = new Path.Rectangle(50,30,120,30);
