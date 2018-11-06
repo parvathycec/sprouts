@@ -88,6 +88,13 @@ input[type="button"].purple-candy {
 
 
 <script type ="text/javascript">
+    //changes by sushmitha starts
+    function nextPage(){
+        var player1 = document.getElementById('txtbox1').value;
+        var player2 = document.getElementById('txtbox2').value;
+        location.href='index.html?player1='+player1+'&player2='+player2;
+    }
+    //changes by sushmitha ends
 </script>
 
 
@@ -96,14 +103,17 @@ input[type="button"].purple-candy {
 
 <center>
     <div style='color:#008CBA'><b>Player 1</b><br></div>
-    
-    <input type="text" name="txtbox" style='font-size:20pt;width:400px' id='txtbox'><br/>
+    <!--changes by sushmitha starts - change id value-->
+    <input type="text" name="txtbox" style='font-size:20pt;width:400px' id='txtbox1'><br/>
+    <!--changes by sushmitha ends-->
                                                                                   
 </center>
 <br/>
 <center>
     <div style='color:#008CBA'><b>Player 2</b><br></div>
-    <input type="text" style='font-size:20pt;width:400px'  name="txtbox" id="txtbox"/><br/>
+    <!--changes by sushmitha starts - change id value-->
+    <input type="text" style='font-size:20pt;width:400px'  name="txtbox" id="txtbox2"/><br/>
+    <!--changes by sushmitha ends-->
 </center>
 <br/>
 <center>
@@ -120,7 +130,9 @@ input[type="button"].purple-candy {
 <br/>
  
 <center>
-    <input input type="button" class="thoughtbot" onclick="location.href='index.html';" id="btn" value="Play me" style="height:50px;width:400;font-size:20px;border-radius:20px;background-color:#008CBA"/>
+    <!--changes by sushmitha starts - replace this line-->
+    <input input type="button" class="thoughtbot" onclick="nextPage()" id="btn" value="Play me" style="height:50px;width:400;font-size:20px;border-radius:20px;background-color:#008CBA"/>
+    <!--changes by sushmitha ends-->
 </center>
 <br/>
  

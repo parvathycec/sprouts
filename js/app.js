@@ -1,6 +1,29 @@
+//changes by sushmitha starts
+function getParam( name )
+{
+ name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+ var regexS = "[\\?&]"+name+"=([^&#]*)";
+ var regex = new RegExp( regexS );
+ var results = regex.exec( window.location.href );
+ if( results == null )
+  return "";
+else
+ return results[1];
+}
+
+
 //Sprint 2: User's names
-var player1 = 'Player 1';//default name
-var player2 = 'Player 2';//default name
+var player1 = getParam('player1')
+
+var player2 = getParam('player2')
+
+if(player1 == ""){
+    player1 = 'Player 1';//default name
+}
+if(player2 == ""){
+    player2 = 'Player 2';//default name
+}
+//changes by sushmitha ends
 var currentPlayer = player1;
 
 
