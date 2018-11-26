@@ -110,7 +110,7 @@ function onMouseDown(event) {
     }
 	console.log("Path:-"+path);
     
-    var alreadyCreated = false;
+   /* var alreadyCreated = false;
     
     path.onClick = function(event) {
             if(!alreadyCreated){
@@ -123,7 +123,7 @@ function onMouseDown(event) {
                 circle.visible = true;
             }
             
-		};
+		};*/
     path.onMouseDrag = function(event) {
         console.log("stop");
         //alert("stop");
@@ -156,6 +156,45 @@ function onMouseUp(event) {
     var checkIn = {};
         
     checkIn = checkInCircle(event.point.x, event.point.y);
+        
+ if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
+     //alert("Self");
+     var count = getPathcCount(checkIn.circle_x,checkIn.circle_y);
+     //alert(count);
+     if(count < 2){
+         var alreadyCreated = false;
+    
+    path.onClick = function(event) {
+            if(!alreadyCreated){
+                alreadyCreated = true;
+                var circle = new Path.Circle(new Point(event.point.x, event.point.y), 20);
+                circle.fillColor = 'purple';
+                circle.visible = false;//Sprint 2
+                circle.pathCount = 2;
+                circles.push(circle);
+                circle.visible = true;
+                updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
+            }
+            
+		};
+     }
+     //path.removeEventListener('click');
+ }else{
+      var alreadyCreated = false;
+    
+    path.onClick = function(event) {
+            if(!alreadyCreated){
+                alreadyCreated = true;
+                var circle = new Path.Circle(new Point(event.point.x, event.point.y), 20);
+                circle.fillColor = 'purple';
+                circle.visible = false;//Sprint 2
+                circle.pathCount = 2;
+                circles.push(circle);
+                circle.visible = true;
+            }
+            
+		};
+ }
         
 	if(!checkIn.status || pathCrossed || checkNoOfPaths(checkIn.circle_x,checkIn.circle_y)){
         //console.log("REMOVEEEEEEEEEE");
@@ -235,6 +274,17 @@ function updateNoOfPaths(x,y){
        
     } 
     
+}
+
+function getPathcCount(x,y){
+
+    for (var i = 0; i < circles.length ; i++) {
+        
+        if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y) {
+
+            return circles[i].pathCount;
+        }
+    }
 }
 
 //var rectForText = new Path.Rectangle(50,30,120,30);
