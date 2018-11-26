@@ -11,6 +11,11 @@ else
  return results[1];
 }
 
+//Sprint 3 - for status bar
+var statusContentList = [];
+var statusAreaList = [];
+var rectList = [];
+var turnText = new PointText(new Point(1000, 50));
 
 //Sprint 2: User's names
 var player1 = getParam('player1')
@@ -207,7 +212,10 @@ function onMouseUp(event) {
 		path.remove()
 		return;
 	}
-    
+    //Sprint 3- hightlight bug issue fixed
+    if(path.curves.length == 0){//Jay, pls check if it is impacting anything.
+        return;    
+    }
     updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
 
 	var segmentCount = path.segments.length;
@@ -222,17 +230,54 @@ function onMouseUp(event) {
 	var difference = segmentCount - newSegmentCount;
 	var percentage = 100 - Math.round(newSegmentCount / segmentCount * 100);
 	path = 0;   
-    //Sprint 2: Player's Move
-    if(currentPlayer == player1){
-        textItem.fillColor = 'darkblue';
-        currentPlayer = player2;
-        textItem.content = player2 + "'s turn";
+    //Sprint 3: status bar on the right
+	//remove all existing status bar for updating
+	removeStatusBar();
+	//create status of the latest event (who made the move)
+    var statusContent = {content:'', fillColor:'lightblue'};
+    if(statusContentList.length == 0){
+       statusContent.content =' ' + currentPlayer + ' started the game. ';
+        
     }else{
-        textItem.fillColor = 'green';   
-        currentPlayer = player1;
-        textItem.content = player1 + "'s turn";
+        statusContent.content = ' ' + currentPlayer + " made a move. ";
     }
+	//set the color based on current player
+    if(currentPlayer == player1){
+        statusContent.fillColor = 'green';
+    }else{
+        statusContent.fillColor = 'darkBlue';
     }
+	//add the status to a list
+    statusContentList.push(statusContent);
+    //add the turn text at the most top
+    var turnContent = {content:'', fillColor:'lightblue'};
+    //Sprint 2: Player's Move
+    //Sprint 3: check if game is over
+    if(!checkGameOver()){
+       if(currentPlayer == player1){
+            turnContent.fillColor = 'darkblue';
+            currentPlayer = player2;
+            turnContent.content = ' ' + player2 + "'s turn. ";
+        }else{
+            turnContent.fillColor = 'green';   
+            currentPlayer = player1;
+            turnContent.content = ' ' + player1 + "'s turn. ";
+        }
+    }else{
+        turnContent.fillColor = 'orange';
+        turnContent.content = ' ' + currentPlayer + " is the WINNER! ";
+        if(currentPlayer == player1){
+            currentPlayer = player2;
+        }else{
+            currentPlayer = player1;
+        }
+    } 
+	//Sprint 3
+	insertStatusContentList();
+    insertTurnText(turnContent);
+    }
+    //Sprint 2: highlighting circle with pathcount ge 3
+    highlight();
 }
 
 function checkNoOfPaths(x,y){
@@ -298,15 +343,6 @@ function getPathcCount(x,y){
 //rectForText.fillColor = 'yellow';
 
 
-//Adding for Sprint 2: Text message saying the turn of the user.
-var textItem = new PointText({
-	content: player1 + "'s turn",
-    point: (20,30),
-	fillColor: 'green',
-    fontSize: 20,
-    fontWeight: 10,
-    visible: false,
-});
 //Sprint 2: Game starts text message
 var textGameStarts = new PointText({
 	content: "GAME STARTS",
@@ -326,6 +362,74 @@ function onFrame(event) {
         circle1.visible = true;
         circle2.visible = true;
         circle3.visible = true;
-        textItem.visible = true;
+        currentPlayer = player1;
+        turnContent = {fillColor:'green', content:' Game starts!! ' + player1 + "'s turn. "};
+        insertTurnText(turnContent);
     }
+}
+
+//Sprint 3: 
+//Function to insert Player turn text in the right top of canvas
+function insertTurnText(turnContent){
+    turnText.content = turnContent.content;
+    turnText.fontSize = 20;
+    turnText.fontWeight= 10;
+    turnText.fillColor = 'white';
+    var rect = new Path.Rectangle(turnText.bounds, new Size(10, 10));
+    rect.fillColor = turnContent.fillColor;
+    turnText.insertAbove(rect);
+    rectList.push(rect);
+}
+//Sprint 3:
+//Function to remove the status bar in the left on every mouse up.
+function removeStatusBar(){
+    for(var i=0;i<statusAreaList.length;i++){
+        statusAreaList[i].remove();
+    }
+    for(var i=0; i<rectList.length; i++){
+        rectList[i].remove();
+    }
+    turnText.remove();
+}
+
+//Sprint 3:
+//Function to insert status content bar 
+function insertStatusContentList(){
+    var point = new Point(1000, 80);
+	for (var i=statusContentList.length-1; i>=0; i--){
+        var statusText = new PointText(point);
+        statusText.content = statusContentList[i].content;
+        statusText.fontSize = 20;
+        statusText.fillColor = 'white';
+        statusText.fontWeight= 10;
+        var rect = new Path.Rectangle(statusText.bounds, new Size(10, 10));
+        rect.fillColor = statusContentList[i].fillColor;
+        statusText.insertAbove(rect);
+        statusAreaList.push(statusText);
+        rectList.push(rect);
+        point = point + { x: 0, y: 30 };
+    }
+}
+
+//Sprint 3: highlight circle with connection ge 3
+function highlight(){
+	for (var i = 0; i < circles.length ; i++) {
+        console.log('Path count >> ', circles[i].pathCount)
+        if(circles[i].pathCount >= 3){
+            circles[i].strokeColor = 'orange';
+            circles[i].strokeWidth = 10;
+        }
+    }
+}
+
+//Sprint 3: check if game over and who is the winner
+function checkGameOver(){
+    var allCirclesHighlighted = true;
+    for(var i=0; i<circles.length; i++){
+        if(circles[i].pathCount < 3){
+            allCirclesHighlighted = false;
+            break;
+        }
+    }  
+    return allCirclesHighlighted;
 }
