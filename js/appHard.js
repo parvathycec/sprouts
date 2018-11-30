@@ -169,6 +169,7 @@ function onMouseUp(event) {
     checkIn = checkInCircle(event.point.x, event.point.y);
         
  if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
+     updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
      //alert("Self");
      var count = getPathcCount(checkIn.circle_x,checkIn.circle_y);
      //alert(count);

@@ -164,6 +164,7 @@ function onMouseUp(event) {
         
  if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
      //alert("Self");
+     updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
      var count = getPathcCount(checkIn.circle_x,checkIn.circle_y);
      //alert(count);
      if(count < 2){
@@ -202,15 +203,18 @@ function onMouseUp(event) {
  }
         
 	if(!checkIn.status || pathCrossed || checkNoOfPaths(checkIn.circle_x,checkIn.circle_y)){
-        //console.log("REMOVEEEEEEEEEE");
+        console.log("REMOVEEEEEEEEEE");
 		path.remove()
 		return;
 	}
+    
     //Sprint 3: hightlight bug issue fixed
     if(path.curves.length == 0){//Jay, pls check if it is impacting anything.
         return;    
     }
-    updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
+    
+    updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);    
+   
 	var segmentCount = path.segments.length;
 
 	// When the mouse is released, simplify it:
