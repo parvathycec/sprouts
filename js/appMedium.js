@@ -82,12 +82,6 @@ circle3.fillColor = 'red';
 circle3.visible = false;//Sprint 3
 circle3.pathCount = 0;
 circles.push(circle3)
-//var circle4 = new Path.Circle(new Point(getRandomInt(500,700), getRandomInt(300,400)), 25);
-var circle4 = new Path.Circle(new Point(800, 400), 25);
-circle4.fillColor = 'red';
-circle4.visible = false;//Sprint 3
-circle4.pathCount = 0;
-circles.push(circle4)
 
 
 
@@ -369,7 +363,6 @@ function onFrame(event) {
         circle1.visible = true;
         circle2.visible = true;
         circle3.visible = true;
-        circle4.visible = true;
         currentPlayer = player1;
         turnContent = {fillColor:'green', content:' Game starts!! ' + player1 + "'s turn. "};
         insertTurnText(turnContent);
