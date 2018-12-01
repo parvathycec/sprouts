@@ -101,13 +101,21 @@ var path = new Path(); //created new path object.
 
 //event handling on mouse down
 function onMouseDown(event) {
+    if(checkGameOver()){
+        return;
+    }
     pathCrossed = false;
 	
     var checkIn = {};
     checkIn = checkInCircle(event.point.x, event.point.y);
 	if(!checkIn.status){
 		return;
-	}
+	} 
+    //Sprint 3: change in turns logic after client review.
+    if(!turnStatus){
+        console.log('NOT UR TURN!!!!');
+        return;
+    }
     startingCircleX = checkIn.circle_x;
     startingCircleY = checkIn.circle_y;
     
