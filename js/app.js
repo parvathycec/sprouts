@@ -204,7 +204,7 @@ function onMouseUp(event) {
         
 	if(!checkIn.status || pathCrossed || checkNoOfPaths(checkIn.circle_x,checkIn.circle_y)){
         console.log("REMOVEEEEEEEEEE");
-		path.remove()
+		path.remove();
 		return;
 	}
     
@@ -309,13 +309,13 @@ function updateNoOfPaths(x,y){
         if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y) {
            
            circles[i].pathCount = circles[i].pathCount + 1; 
-            console.log( "start : "+circles[i].pathCount);
+            console.log( "start up: "+circles[i].pathCount);
         }
            
         if(startingCircleX !=x && startingCircleY !=y){
            if(circles[i].bounds.center._x == startingCircleX && circles[i].bounds.center._y == startingCircleY) 
            circles[i].pathCount = circles[i].pathCount + 1;
-            console.log( "end : "+circles[i].pathCount);
+            console.log( "end up: "+circles[i].pathCount);
            }
         
        

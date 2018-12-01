@@ -92,7 +92,13 @@ input[type="button"].purple-candy {
     function nextPage(){
         var player1 = document.getElementById('txtbox1').value;
         var player2 = document.getElementById('txtbox2').value;
-        location.href='index.html?player1='+player1+'&player2='+player2;
+          var sel = document.getElementById('gamelevel').value;
+        //alert(sel);
+        if (sel=="Hard"){
+          location.href='indexHard.html?player1='+player1+'&player2='+player2;
+        }else {
+            location.href='index.html?player1='+player1+'&player2='+player2;
+        }
     }
     //changes by sushmitha ends
 </script>
@@ -119,7 +125,7 @@ input[type="button"].purple-candy {
 <center>
 
 <div style='color:#008CBA'><b>Level</b><br></div>
-<select name="Level" style='font-size:20pt;width:400px' >
+<select id = "gamelevel" name="Level" style='font-size:20pt;width:400px' >
 	   <option value ="Easy"> Easy</option>
 	   <option value ="Hard">Hard</option>
 					 
