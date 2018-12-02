@@ -45,8 +45,11 @@ var currentPlayer = player1;
 //list of circles in the canvas
 var circles = []
 
+//list of paths in the canvas
+var paths = []
+
 //
-var pathCrossed = false;
+//var pathCrossed = false;
 
 var startingCircleX="";
 var startingCircleY="";
@@ -110,7 +113,7 @@ function onMouseDown(event) {
    if(checkGameOver()){
         return;
     }
-    pathCrossed = false;
+    //pathCrossed = false;
 	
     var checkIn = {};
     checkIn = checkInCircle(event.point.x, event.point.y);
@@ -159,11 +162,11 @@ function onMouseDown(event) {
             }
             
 		};*/
-    path.onMouseDrag = function(event) {
+    /*path.OnMouseDown = function(event) {
         console.log("stop");
         //alert("stop");
         pathCrossed = true;
-    }
+    }*/
     
     
     
@@ -185,7 +188,14 @@ function onMouseDrag(event) {
 
 // When the mouse is released, we simplify the path:
 function onMouseUp(event) {
-    if(path !=0){ //condition to check path exists or not
+    
+    if(path.length < 101){
+        console.log("REMOVEEEEEEEEEE");
+        path.deleted = true;
+		path.remove();
+		return;
+	}
+    if(path !=0 && !path.deleted && path.length > 100){ //condition to check path exists or not
      //if the curve is connecting two dots, it is a valid move, else 
         
     var checkIn = {};
@@ -193,7 +203,7 @@ function onMouseUp(event) {
     checkIn = checkInCircle(event.point.x, event.point.y);
         
  if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
-     updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
+     //updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
      //alert("Self");
      var count = getPathcCount(checkIn.circle_x,checkIn.circle_y);
      //alert(count);
@@ -212,7 +222,7 @@ function onMouseUp(event) {
                 circle.pathCount = 2;
                 circles.push(circle);
                 circle.visible = true;
-                updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
+                //updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
                 //Sprint 3: status bar on the right
                 //remove all existing status bar for updating
                 removeStatusBar();
@@ -252,17 +262,27 @@ function onMouseUp(event) {
 		};
  }
         
-	if(!checkIn.status || pathCrossed || checkNoOfPaths(checkIn.circle_x,checkIn.circle_y)){
-        //console.log("REMOVEEEEEEEEEE");
-		path.remove()
+	if(!checkIn.status  || checkNoOfPaths(checkIn.circle_x,checkIn.circle_y) || checkPathCrossed(path)){
+        console.log("REMOVEEEEEEEEEE");
+        path.deleted = true;
+        console.log("After Remove Count-"+getPathcCount(checkIn.circle_x,checkIn.circle_y));
+		path.remove();
 		return;
 	}
+        
+    paths.push(path);
     //Sprint 3- hightlight bug issue fixed
     if(path.curves.length == 0){//Jay, pls check if it is impacting anything.
         return;    
     }
-    updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
-
+            
+    if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
+     //alert("Self");
+     updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
+    }
+    
+    updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);    
+   
 	var segmentCount = path.segments.length;
 
 	// When the mouse is released, simplify it:
@@ -301,6 +321,13 @@ function onMouseUp(event) {
 function checkNoOfPaths(x,y){
     for (var i = 0; i < circles.length ; i++) {
         
+        if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y && circles[i].bounds.center._x == startingCircleX && circles[i].bounds.center._y == startingCircleY){
+            
+            console.log( "self : "+circles[i].pathCount);
+            if(circles[i].pathCount === 2) 
+            return true;
+        }
+        
         if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y) {
            
             
@@ -325,24 +352,39 @@ function checkNoOfPaths(x,y){
 }
 
 function updateNoOfPaths(x,y){
-    
+    console.log("Inside updateNoOfPaths");
    for (var i = 0; i < circles.length ; i++) {
        
         if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y) {
            
            circles[i].pathCount = circles[i].pathCount + 1; 
-            console.log( "start : "+circles[i].pathCount);
+            console.log( "start up: "+circles[i].pathCount);
         }
            
         if(startingCircleX !=x && startingCircleY !=y){
            if(circles[i].bounds.center._x == startingCircleX && circles[i].bounds.center._y == startingCircleY) 
            circles[i].pathCount = circles[i].pathCount + 1;
-            console.log( "end : "+circles[i].pathCount);
+            console.log( "end up: "+circles[i].pathCount);
            }
         
        
-    } 
+    }  
     
+}
+
+function checkPathCrossed(path){
+    
+    for (var i = 0; i < paths.length ; i++) {
+        
+    if(path.intersects(paths[i])){
+        console.log("intersects remove");
+       return true;
+    
+    }
+    
+}
+    
+    return false;
 }
 
 function getPathcCount(x,y){

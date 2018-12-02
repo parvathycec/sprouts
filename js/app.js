@@ -51,9 +51,6 @@ var paths = []
 //
 //var pathCrossed = false;
 
-//
-var pathCrossed = false;
-
 var startingCircleX="";
 var startingCircleY="";
 
@@ -93,15 +90,13 @@ circle2.visible = false;//Sprint 2
 circle2.pathCount = 0;
 circles.push(circle2)
 
-
-
 //defining the curve
 var path = new Path(); //created new path object.
 
 
 //event handling on mouse down
 function onMouseDown(event) {
-    if(checkGameOver()){
+   if(checkGameOver()){
         return;
     }
     //pathCrossed = false;
@@ -111,7 +106,7 @@ function onMouseDown(event) {
 	if(!checkIn.status){
 		return;
 	}
-    //Sprint 3: change in turns logic after client review.
+     //Sprint 3: change in turns logic after client review.
     if(!turnStatus){
         console.log('NOT UR TURN!!!!');
         return;
@@ -153,7 +148,7 @@ function onMouseDown(event) {
             }
             
 		};*/
-    /*path.onMouseDrag = function(event) {
+    /*path.OnMouseDown = function(event) {
         console.log("stop");
         //alert("stop");
         pathCrossed = true;
@@ -179,6 +174,7 @@ function onMouseDrag(event) {
 
 // When the mouse is released, we simplify the path:
 function onMouseUp(event) {
+    
     if(path.length < 101){
         console.log("REMOVEEEEEEEEEE");
         path.deleted = true;
@@ -187,22 +183,23 @@ function onMouseUp(event) {
 	}
     if(path !=0 && !path.deleted && path.length > 100){ //condition to check path exists or not
      //if the curve is connecting two dots, it is a valid move, else 
-      console.log(path.length);  
+        
     var checkIn = {};
         
     checkIn = checkInCircle(event.point.x, event.point.y);
-    
+        
  if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
+     //updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
      //alert("Self");
-     updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
      var count = getPathcCount(checkIn.circle_x,checkIn.circle_y);
      //alert(count);
      if(count < 2){
          var alreadyCreated = false;
-        path.onClick = function(event) {
+    
+    path.onClick = function(event) {
             if(checkGameOver()){
-                    return;
-                }
+                return;
+            }
             if(!alreadyCreated){
                 alreadyCreated = true;
                 var circle = new Path.Circle(new Point(event.point.x, event.point.y), 20);
@@ -260,16 +257,32 @@ function onMouseUp(event) {
 	}
         
     paths.push(path);
-    
-    //Sprint 3: hightlight bug issue fixed
+    //Sprint 3- hightlight bug issue fixed
     if(path.curves.length == 0){//Jay, pls check if it is impacting anything.
         return;    
     }
-    
-    updateNoOfPaths(checkIn.circle_x,checkIn.circle_y); 
-        
+            
     if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
-        updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
+     //alert("Self");
+     updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
+    }
+    
+    updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);    
+   
+	var segmentCount = path.segments.length;
+
+	// When the mouse is released, simplify it:
+	path.simplify(10);
+
+	// Select the path, so we can see its segments:
+	//path.fullySelected = true;
+
+	var newSegmentCount = path.segments.length;
+	var difference = segmentCount - newSegmentCount;
+	var percentage = 100 - Math.round(newSegmentCount / segmentCount * 100);
+	path = 0;   
+   if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
+
         //for self loop, pass over the turn to next person without waiting for the dot to be put in the loop
         //Sprint 3: status bar on the right
         //remove all existing status bar for updating
@@ -282,21 +295,6 @@ function onMouseUp(event) {
         turnStatus = false;  
         instructionText.content = "INSTRUCTION: Put a dot in the connection you made.";
     }
-    
-	var segmentCount = path.segments.length;
-
-	// When the mouse is released, simplify it:
-	path.simplify(10);
-
-	// Select the path, so we can see its segments:
-	//path.fullySelected = true;
-
-	var newSegmentCount = path.segments.length;
-	var difference = segmentCount - newSegmentCount;
-	var percentage = 100 - Math.round(newSegmentCount / segmentCount * 100);
-	path = 0; 
-    
-    
     //Sprint 2: highlighting circle with pathcount ge 3
     highlight();
     if(checkGameOver()){
@@ -356,7 +354,7 @@ function updateNoOfPaths(x,y){
            }
         
        
-    } 
+    }  
     
 }
 
@@ -391,16 +389,6 @@ function getPathcCount(x,y){
 //rectForText.fillColor = 'yellow';
 
 
-//Adding for Sprint 2: Text message saying the turn of the user.
-//changing this in Sprint 3
-/*var textItem = new PointText({
-	content: player1 + "'s turn",
-    point: (20,30),
-	fillColor: 'green',
-    fontSize: 20,
-    fontWeight: 10,
-    visible: false,
-});*/
 //Sprint 2: Game starts text message
 var textGameStarts = new PointText({
 	content: "GAME STARTS",
@@ -425,7 +413,6 @@ function onFrame(event) {
         instructionText.visible = true;
     }
 }
-
 
 //Sprint 3: 
 //Function to insert Player turn text in the right top of canvas
@@ -480,6 +467,7 @@ function highlight(){
         }
     }
 }
+
 //Sprint 3: check if game over and who is the winner
 function checkGameOver(){
     var allCirclesHighlighted = true;
@@ -491,7 +479,6 @@ function checkGameOver(){
     }  
     return allCirclesHighlighted;
 }
-
 //Sprint 3: changes after client review
 function addStatusBar(){
     //create status of the latest event (who made the move)
@@ -535,4 +522,4 @@ function addStatusBar(){
     //Sprint 3
 	insertStatusContentList();
     insertTurnText(turnContent);
-    }
+}
