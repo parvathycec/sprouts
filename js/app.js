@@ -295,50 +295,6 @@ function onMouseUp(event) {
 	var difference = segmentCount - newSegmentCount;
 	var percentage = 100 - Math.round(newSegmentCount / segmentCount * 100);
 	path = 0; 
-        
-	//Sprint 3: status bar on the right
-	//remove all existing status bar for updating
-	removeStatusBar();
-	//create status of the latest event (who made the move)
-    var statusContent = {content:'', fillColor:'lightblue'};
-    if(statusContentList.length == 0){
-       statusContent.content =' ' + currentPlayer + ' started the game. ';
-        
-    }else{
-        statusContent.content = ' ' + currentPlayer + " made a move. ";
-    }
-	//set the color based on current player
-    if(currentPlayer == player1){
-        statusContent.fillColor = 'green';
-    }else{
-        statusContent.fillColor = 'darkBlue';
-    }
-	//add the status to a list
-    statusContentList.push(statusContent);
-   
-   //Sprint 3: check if game is over
-    if(!checkGameOver()){
-       if(currentPlayer == player1){
-            turnContent.fillColor = 'darkblue';
-            currentPlayer = player2;
-            turnContent.content = ' ' + player2 + "'s turn. ";
-        }else{
-            turnContent.fillColor = 'green';   
-            currentPlayer = player1;
-            turnContent.content = ' ' + player1 + "'s turn. ";
-        }
-    }else{
-        turnContent.fillColor = 'orange';
-        turnContent.content = ' ' + currentPlayer + " is the WINNER! ";
-        if(currentPlayer == player1){
-            currentPlayer = player2;
-        }else{
-            currentPlayer = player1;
-        }
-    } 
-    //Sprint 3
-	insertStatusContentList();
-    insertTurnText(turnContent);
     
     
     //Sprint 2: highlighting circle with pathcount ge 3
