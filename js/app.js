@@ -45,6 +45,12 @@ var currentPlayer = player1;
 //list of circles in the canvas
 var circles = []
 
+//list of paths in the canvas
+var paths = []
+
+//
+//var pathCrossed = false;
+
 //
 var pathCrossed = false;
 
@@ -98,7 +104,7 @@ function onMouseDown(event) {
     if(checkGameOver()){
         return;
     }
-    pathCrossed = false;
+    //pathCrossed = false;
 	
     var checkIn = {};
     checkIn = checkInCircle(event.point.x, event.point.y);
@@ -147,11 +153,11 @@ function onMouseDown(event) {
             }
             
 		};*/
-    path.onMouseDrag = function(event) {
+    /*path.onMouseDrag = function(event) {
         console.log("stop");
         //alert("stop");
         pathCrossed = true;
-    }
+    }*/
     
     
     
@@ -173,9 +179,15 @@ function onMouseDrag(event) {
 
 // When the mouse is released, we simplify the path:
 function onMouseUp(event) {
-    if(path !=0){ //condition to check path exists or not
+    if(path.length < 101){
+        console.log("REMOVEEEEEEEEEE");
+        path.deleted = true;
+		path.remove();
+		return;
+	}
+    if(path !=0 && !path.deleted && path.length > 100){ //condition to check path exists or not
      //if the curve is connecting two dots, it is a valid move, else 
-        
+      console.log(path.length);  
     var checkIn = {};
         
     checkIn = checkInCircle(event.point.x, event.point.y);
@@ -199,7 +211,7 @@ function onMouseUp(event) {
                 circle.pathCount = 2;
                 circles.push(circle);
                 circle.visible = true;
-                updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
+                //updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
                 //Sprint 3: status bar on the right
                 //remove all existing status bar for updating
                 removeStatusBar();
@@ -239,11 +251,15 @@ function onMouseUp(event) {
 		};
  }
         
-	if(!checkIn.status || pathCrossed || checkNoOfPaths(checkIn.circle_x,checkIn.circle_y)){
+	if(!checkIn.status  || checkNoOfPaths(checkIn.circle_x,checkIn.circle_y) || checkPathCrossed(path)){
         console.log("REMOVEEEEEEEEEE");
+        path.deleted = true;
+        console.log("After Remove Count-"+getPathcCount(checkIn.circle_x,checkIn.circle_y));
 		path.remove();
 		return;
 	}
+        
+    paths.push(path);
     
     //Sprint 3: hightlight bug issue fixed
     if(path.curves.length == 0){//Jay, pls check if it is impacting anything.
@@ -251,8 +267,9 @@ function onMouseUp(event) {
     }
     
     updateNoOfPaths(checkIn.circle_x,checkIn.circle_y); 
+        
     if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
-
+        updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
         //for self loop, pass over the turn to next person without waiting for the dot to be put in the loop
         //Sprint 3: status bar on the right
         //remove all existing status bar for updating
@@ -277,8 +294,52 @@ function onMouseUp(event) {
 	var newSegmentCount = path.segments.length;
 	var difference = segmentCount - newSegmentCount;
 	var percentage = 100 - Math.round(newSegmentCount / segmentCount * 100);
-	path = 0;   
-	
+	path = 0; 
+        
+	//Sprint 3: status bar on the right
+	//remove all existing status bar for updating
+	removeStatusBar();
+	//create status of the latest event (who made the move)
+    var statusContent = {content:'', fillColor:'lightblue'};
+    if(statusContentList.length == 0){
+       statusContent.content =' ' + currentPlayer + ' started the game. ';
+        
+    }else{
+        statusContent.content = ' ' + currentPlayer + " made a move. ";
+    }
+	//set the color based on current player
+    if(currentPlayer == player1){
+        statusContent.fillColor = 'green';
+    }else{
+        statusContent.fillColor = 'darkBlue';
+    }
+	//add the status to a list
+    statusContentList.push(statusContent);
+   
+   //Sprint 3: check if game is over
+    if(!checkGameOver()){
+       if(currentPlayer == player1){
+            turnContent.fillColor = 'darkblue';
+            currentPlayer = player2;
+            turnContent.content = ' ' + player2 + "'s turn. ";
+        }else{
+            turnContent.fillColor = 'green';   
+            currentPlayer = player1;
+            turnContent.content = ' ' + player1 + "'s turn. ";
+        }
+    }else{
+        turnContent.fillColor = 'orange';
+        turnContent.content = ' ' + currentPlayer + " is the WINNER! ";
+        if(currentPlayer == player1){
+            currentPlayer = player2;
+        }else{
+            currentPlayer = player1;
+        }
+    } 
+    //Sprint 3
+	insertStatusContentList();
+    insertTurnText(turnContent);
+    
     
     //Sprint 2: highlighting circle with pathcount ge 3
     highlight();
@@ -291,6 +352,13 @@ function onMouseUp(event) {
 
 function checkNoOfPaths(x,y){
     for (var i = 0; i < circles.length ; i++) {
+        
+        if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y && circles[i].bounds.center._x == startingCircleX && circles[i].bounds.center._y == startingCircleY){
+            
+            console.log( "self : "+circles[i].pathCount);
+            if(circles[i].pathCount === 2) 
+            return true;
+        }
         
         if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y) {
            
@@ -316,7 +384,7 @@ function checkNoOfPaths(x,y){
 }
 
 function updateNoOfPaths(x,y){
-    
+    console.log("Inside updateNoOfPaths");
    for (var i = 0; i < circles.length ; i++) {
        
         if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y) {
@@ -334,6 +402,21 @@ function updateNoOfPaths(x,y){
        
     } 
     
+}
+
+function checkPathCrossed(path){
+    
+    for (var i = 0; i < paths.length ; i++) {
+        
+    if(path.intersects(paths[i])){
+        console.log("intersects remove");
+       return true;
+    
+    }
+    
+}
+    
+    return false;
 }
 
 function getPathcCount(x,y){
