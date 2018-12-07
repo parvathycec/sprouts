@@ -90,7 +90,7 @@ circle2.visible = false;//Sprint 2
 circle2.pathCount = 0;
 circles.push(circle2)
 //var circle3 = new Path.Circle(new Point(getRandomInt(400,600), getRandomInt(300,400)), 25);
-var circle3 = new Path.Circle(new Point(600, 250), 25);
+var circle3 = new Path.Circle(new Point(600, 250), 25); //creating dot no.3
 circle3.fillColor = 'red';
 circle3.visible = false;//Sprint 3
 circle3.pathCount = 0;
@@ -180,26 +180,27 @@ function onMouseDrag(event) {
 
 // When the mouse is released, we simplify the path:
 function onMouseUp(event) {
-    
+    //giving minimum length for self loop it will remove if players put small size
     if(path.length < 101){
         console.log("REMOVEEEEEEEEEE");
         path.deleted = true;
 		path.remove();
 		return;
 	}
+
     if(path !=0 && !path.deleted && path.length > 100){ //condition to check path exists or not
      //if the curve is connecting two dots, it is a valid move, else 
         
     var checkIn = {};
         
     checkIn = checkInCircle(event.point.x, event.point.y);
-        
+//check if the path is self loop or not        
  if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
      //updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
      //alert("Self");
      var count = getPathcCount(checkIn.circle_x,checkIn.circle_y);
      //alert(count);
-     if(count < 2){
+     if(count < 2){ //this is stopping infinite loop
          var alreadyCreated = false;
     
     path.onClick = function(event) {
@@ -208,10 +209,11 @@ function onMouseUp(event) {
             }
             if(!alreadyCreated){
                 alreadyCreated = true;
+                //creating middle dot on path color purple. only one dot is allowed
                 var circle = new Path.Circle(new Point(event.point.x, event.point.y), 20);
                 circle.fillColor = 'purple';
-                circle.visible = false;//Sprint 2
-                circle.pathCount = 2;
+                circle.visible = false;
+                circle.pathCount = 2; //count will be 2 
                 circles.push(circle);
                 circle.visible = true;
                 //updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
@@ -238,7 +240,7 @@ function onMouseUp(event) {
                 alreadyCreated = true;
                 var circle = new Path.Circle(new Point(event.point.x, event.point.y), 20);
                 circle.fillColor = 'purple';
-                circle.visible = false;//Sprint 2
+                circle.visible = false;
                 circle.pathCount = 2;
                 circles.push(circle);
                 circle.visible = true;
@@ -253,7 +255,7 @@ function onMouseUp(event) {
             
 		};
  }
-        
+    //conditions to remove paths on wrong move    
 	if(!checkIn.status  || checkNoOfPaths(checkIn.circle_x,checkIn.circle_y) || checkPathCrossed(path)){
         console.log("REMOVEEEEEEEEEE");
         path.deleted = true;
@@ -267,7 +269,7 @@ function onMouseUp(event) {
     if(path.curves.length == 0){//Jay, pls check if it is impacting anything.
         return;    
     }
-            
+     //this function is checking self loop and updating count        
     if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
      //alert("Self");
      updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
@@ -310,9 +312,10 @@ function onMouseUp(event) {
 }
 }
 
+//function to check no of paths
 function checkNoOfPaths(x,y){
     for (var i = 0; i < circles.length ; i++) {
-        
+        //for self it will count 2 is true else 3 is true
         if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y && circles[i].bounds.center._x == startingCircleX && circles[i].bounds.center._y == startingCircleY){
             
             console.log( "self : "+circles[i].pathCount);
@@ -343,6 +346,7 @@ function checkNoOfPaths(x,y){
     return false;
 }
 
+//this function will update no of path
 function updateNoOfPaths(x,y){
     console.log("Inside updateNoOfPaths");
    for (var i = 0; i < circles.length ; i++) {
@@ -364,6 +368,7 @@ function updateNoOfPaths(x,y){
     
 }
 
+//this function will check path is crossed or not
 function checkPathCrossed(path){
     
     for (var i = 0; i < paths.length ; i++) {
@@ -379,6 +384,7 @@ function checkPathCrossed(path){
     return false;
 }
 
+//this function retrun the path count
 function getPathcCount(x,y){
 
     for (var i = 0; i < circles.length ; i++) {
