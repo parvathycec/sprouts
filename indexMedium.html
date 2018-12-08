@@ -13,6 +13,23 @@
 
 
 </script>
+<script type="text/javascript">
+
+function getParam( name ){
+ name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+ var regexS = "[\\?&]"+name+"=([^&#]*)";
+ var regex = new RegExp( regexS );
+ var results = regex.exec( window.location.href );
+ if( results == null )
+  return "";
+else
+ return results[1];
+}
+
+function navigate(){
+    location.href="indexMedium.html?player1="+getParam('player1')+'&player2='+getParam('player2');
+}    
+</script>
 <style>
     
 input[type="button"].purple-candy {
@@ -57,7 +74,7 @@ input[type="button"].purple-candy {
 <canvas style="background-color: #eeeeed; display: inline;" width="1300" height="560" id="canvas"/>
 </div>
 <center>
-<input type="button" id="btnNewGame" class="purple-candy help" onclick="location.href='indexMedium.html';" value=" Play Again" style="height:50px;width:400;font-size:20px;border-radius:20px;background-color:#008CBA !important;visibility:hidden" />
+<input type="button" id="btnNewGame" class="purple-candy help" onclick="navigate()" value=" Play Again" style="height:50px;width:400;font-size:20px;border-radius:20px;background-color:#008CBA !important;visibility:hidden" />
 </center>
 
 </body>
