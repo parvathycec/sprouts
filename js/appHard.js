@@ -10,6 +10,8 @@ function getParam( name )
 else
  return results[1];
 }
+var lineCount1=0;
+var lineCount2=0;
 
 //Sprint 3 - for status bar
 var statusContentList = [];
@@ -25,7 +27,8 @@ instructionText.fontWeight= 10;
 instructionText.fillColor = 'black';
 instructionText.visible=false;
 // instruction text at th bottom of the canvas ends
-var turnText = new PointText(new Point(1000, 50));
+var turnPoint = new Point(1000, 50);
+var turnText = new PointText(turnPoint);
 
 //Sprint 2: User's names
 var player1 = getParam('player1')
@@ -427,6 +430,7 @@ function onFrame(event) {
         turnContent = {fillColor:'green', content:' Game starts!! ' + player1 + "'s turn. "};
         insertTurnText(turnContent);
         instructionText.visible = true;
+        scoreBoard();
     }
 }
 
@@ -517,20 +521,31 @@ function addStatusBar(){
     if(!checkGameOver()){
        if(currentPlayer == player1){
             turnContent.fillColor = 'darkblue';
+            lineCount1 = lineCount1 + 1;
             currentPlayer = player2;
             turnContent.content = ' ' + player2 + "'s turn. ";
         }else{
             turnContent.fillColor = 'green';   
+            lineCount2 = lineCount2 + 1;
             currentPlayer = player1;
             turnContent.content = ' ' + player1 + "'s turn. ";
         }
     }else{
         turnContent.fillColor = 'orange';
-        turnContent.content = ' ' + currentPlayer + " is the WINNER! ";
         if(currentPlayer == player1){
-            currentPlayer = player2;
+           lineCount = lineCount1 + 1;
+        }else{
+            lineCount = lineCount2 +1;
+        }
+        
+        turnPoint = turnPoint + {x:-200, y:0};
+        turnText = new PointText(turnPoint);
+        turnContent.content = ' ' + currentPlayer + " is the WINNER! Winner's line count is "+lineCount+". ";;
+        if(currentPlayer == player1){
+            sessionStorage.setItem('score1', Number(sessionStorage.getItem('score1')) + 1);
         }else{
             currentPlayer = player1;
+            sessionStorage.setItem('score2', Number(sessionStorage.getItem('score2')) + 1);
         }
         instructionText.content = "";
         document.getElementById('btnNewGame').style.visibility = 'visible';
@@ -538,4 +553,17 @@ function addStatusBar(){
     //Sprint 3
 	insertStatusContentList();
     insertTurnText(turnContent);
+    scoreBoard();
+}
+var scorePoint = new Point(20, 530);
+var scoreText = new PointText(scorePoint);
+function scoreBoard(){
+    //scoreText.remove();
+    // Get saved data from sessionStorage
+    var score1 = sessionStorage.getItem('score1');
+    var score2 = sessionStorage.getItem('score2');
+    scoreText.content = player1 + " : " + score1 + " | " + player2 + " : " + score2;
+    scoreText.fontSize = 20;
+    scoreText.fontWeight= 10;
+    scoreText.fillColor = 'blue';
 }
