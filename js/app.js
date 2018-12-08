@@ -10,6 +10,21 @@ function getParam( name )
 else
  return results[1];
 }
+//Sprint 2: User's names
+var player1 = getParam('player1')
+//document.getElementById('player1name') = player1;
+var player2 = getParam('player2')
+//document.getElementById('player2name') = player2;
+if(player1 == ""){
+    player1 = 'Player 1';//default name
+}
+if(player2 == ""){
+    player2 = 'Player 2';//default name
+}
+//changes by sushmitha ends
+//number of line counts for each player
+var lineCount1=0;
+var lineCount2=0;
 
 //Sprint 3 - for status bar
 var statusContentList = [];
@@ -25,20 +40,9 @@ instructionText.fontWeight= 10;
 instructionText.fillColor = 'black';
 instructionText.visible=false;
 // instruction text at th bottom of the canvas ends
-var turnText = new PointText(new Point(1000, 50));
+var turnPoint = new Point(1000, 50);
+var turnText = new PointText(turnPoint);
 
-//Sprint 2: User's names
-var player1 = getParam('player1')
-
-var player2 = getParam('player2')
-
-if(player1 == ""){
-    player1 = 'Player 1';//default name
-}
-if(player2 == ""){
-    player2 = 'Player 2';//default name
-}
-//changes by sushmitha ends
 var currentPlayer = player1;
 
 
@@ -126,6 +130,8 @@ function onMouseDown(event) {
 		// Select the path, so we can see its segment points:
 		//fullySelected: true
 	});
+    console.log('lineCount1 ', lineCount1);
+    console.log('lineCount2 ', lineCount2);
     //Sprint 2: player based color 
     if(currentPlayer == player1){
         path.strokeColor = 'green';
@@ -174,7 +180,7 @@ function onMouseDrag(event) {
 
 // When the mouse is released, we simplify the path:
 function onMouseUp(event) {
-    //giving minimum length to self small paths will be removed
+    
     if(path.length < 101){
         console.log("REMOVEEEEEEEEEE");
         path.deleted = true;
@@ -187,7 +193,7 @@ function onMouseUp(event) {
     var checkIn = {};
         
     checkIn = checkInCircle(event.point.x, event.point.y);
-    //condition to check if a loop is coming from dot    
+        
  if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
      //updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
      //alert("Self");
@@ -202,10 +208,9 @@ function onMouseUp(event) {
             }
             if(!alreadyCreated){
                 alreadyCreated = true;
-                //creating new purple color circle for middle dot. 
                 var circle = new Path.Circle(new Point(event.point.x, event.point.y), 20);
                 circle.fillColor = 'purple';
-                circle.visible = false;
+                circle.visible = false;//Sprint 2
                 circle.pathCount = 2;
                 circles.push(circle);
                 circle.visible = true;
@@ -231,7 +236,6 @@ function onMouseUp(event) {
             }
             if(!alreadyCreated){
                 alreadyCreated = true;
-                //middle dot for self loop
                 var circle = new Path.Circle(new Point(event.point.x, event.point.y), 20);
                 circle.fillColor = 'purple';
                 circle.visible = false;//Sprint 2
@@ -249,7 +253,7 @@ function onMouseUp(event) {
             
 		};
  }
-    //condition of removing paths    
+        
 	if(!checkIn.status  || checkNoOfPaths(checkIn.circle_x,checkIn.circle_y) || checkPathCrossed(path)){
         console.log("REMOVEEEEEEEEEE");
         path.deleted = true;
@@ -263,7 +267,7 @@ function onMouseUp(event) {
     if(path.curves.length == 0){//Jay, pls check if it is impacting anything.
         return;    
     }
-    //if self loop is coming update no of path once again.       
+            
     if(checkIn.circle_x == startingCircleX && checkIn.circle_y == startingCircleY){
      //alert("Self");
      updateNoOfPaths(checkIn.circle_x,checkIn.circle_y);
@@ -305,14 +309,16 @@ function onMouseUp(event) {
     }
 }
 }
-//function to check no of path coming from a dot
+
 function checkNoOfPaths(x,y){
     for (var i = 0; i < circles.length ; i++) {
         
-        if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y && circles[i].bounds.center._x == startingCircleX && circles[i].bounds.center._y == startingCircleY){
+        if(circles[i].bounds.center._x == x && circles[i].bounds.center._y == y && 
+           circles[i].bounds.center._x == startingCircleX &&
+           circles[i].bounds.center._y == startingCircleY){
             
             console.log( "self : "+circles[i].pathCount);
-            if(circles[i].pathCount === 2) //for self count 2
+            if(circles[i].pathCount === 2) 
             return true;
         }
         
@@ -338,7 +344,7 @@ function checkNoOfPaths(x,y){
     
     return false;
 }
-//function to update no of path depends on condition
+
 function updateNoOfPaths(x,y){
     console.log("Inside updateNoOfPaths");
    for (var i = 0; i < circles.length ; i++) {
@@ -350,7 +356,8 @@ function updateNoOfPaths(x,y){
         }
            
         if(startingCircleX !=x && startingCircleY !=y){
-           if(circles[i].bounds.center._x == startingCircleX && circles[i].bounds.center._y == startingCircleY) 
+           if(circles[i].bounds.center._x == startingCircleX &&
+              circles[i].bounds.center._y == startingCircleY) 
            circles[i].pathCount = circles[i].pathCount + 1;
             console.log( "end up: "+circles[i].pathCount);
            }
@@ -359,7 +366,6 @@ function updateNoOfPaths(x,y){
     }  
     
 }
-//function to return if path has been crossed or not
 
 function checkPathCrossed(path){
     
@@ -375,7 +381,7 @@ function checkPathCrossed(path){
     
     return false;
 }
-//Function to return path count.
+
 function getPathcCount(x,y){
 
     for (var i = 0; i < circles.length ; i++) {
@@ -412,18 +418,22 @@ function onFrame(event) {
         circle2.visible = true;
         currentPlayer = player1;
         turnContent = {fillColor:'green', content:' Game starts!! ' + player1 + "'s turn. "};
-        insertTurnText(turnContent);
+        insertTurnText(turnContent, false);
         instructionText.visible = true;
+        scoreBoard();
     }
 }
 
 //Sprint 3: 
 //Function to insert Player turn text in the right top of canvas
-function insertTurnText(turnContent){
+function insertTurnText(turnContent, isGameOver){
     turnText.content = turnContent.content;
     turnText.fontSize = 20;
     turnText.fontWeight= 10;
     turnText.fillColor = 'white';
+    if(isGameOver){
+        turnText.set({point:[800, 50]});    
+    }
     var rect = new Path.Rectangle(turnText.bounds, new Size(10, 10));
     rect.fillColor = turnContent.fillColor;
     turnText.insertAbove(rect);
@@ -501,28 +511,51 @@ function addStatusBar(){
 	//add the status to a list
     statusContentList.push(statusContent);
      //Sprint 3: check if game is over
-    if(!checkGameOver()){
+    var isGameOver = checkGameOver();
+    if(!isGameOver){
        if(currentPlayer == player1){
             turnContent.fillColor = 'darkblue';
+            lineCount1 = lineCount1 + 1;
             currentPlayer = player2;
             turnContent.content = ' ' + player2 + "'s turn. ";
         }else{
             turnContent.fillColor = 'green';   
+            lineCount2 = lineCount2 + 1;
             currentPlayer = player1;
             turnContent.content = ' ' + player1 + "'s turn. ";
         }
     }else{
         turnContent.fillColor = 'orange';
-        turnContent.content = ' ' + currentPlayer + " is the WINNER! ";
+        var lineCount = 0;
         if(currentPlayer == player1){
-            currentPlayer = player2;
+           lineCount = lineCount1 + 1;
+        }else{
+            lineCount = lineCount2 + 1;
+        }
+        turnContent.content = ' ' + currentPlayer + " is the WINNER! Winner's line count is "+lineCount+". ";
+        if(currentPlayer == player1){
+            sessionStorage.setItem('score1', Number(sessionStorage.getItem('score1')) + 1);
         }else{
             currentPlayer = player1;
+            sessionStorage.setItem('score2', Number(sessionStorage.getItem('score2')) + 1);
         }
         instructionText.content = "";
         document.getElementById('btnNewGame').style.visibility = 'visible';
     } 
     //Sprint 3
 	insertStatusContentList();
-    insertTurnText(turnContent);
+    insertTurnText(turnContent, isGameOver);
+    scoreBoard();
+}
+var scorePoint = new Point(20, 530);
+var scoreText = new PointText(scorePoint);
+function scoreBoard(){
+    //scoreText.remove();
+    // Get saved data from sessionStorage
+    var score1 = sessionStorage.getItem('score1');
+    var score2 = sessionStorage.getItem('score2');
+    scoreText.content = player1 + " : " + score1 + " | " + player2 + " : " + score2;
+    scoreText.fontSize = 20;
+    scoreText.fontWeight= 10;
+    scoreText.fillColor = 'blue';
 }
