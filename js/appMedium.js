@@ -554,6 +554,7 @@ function addStatusBar(){
     //Sprint 3
 	insertStatusContentList();
     insertTurnText(turnContent);
+	scoreBoard();
 }
 var scorePoint = new Point(20, 530);
 var scoreText = new PointText(scorePoint);
